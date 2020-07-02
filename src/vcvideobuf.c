@@ -96,7 +96,7 @@ int vc_out_videobuf2_setup( struct vc_device * dev )
     q->io_modes = VB2_MMAP | VB2_USERPTR | VB2_READ;
     q->drv_priv = dev;
     q->buf_struct_size = sizeof(struct vc_out_buffer);
-    q->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
+    q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
     q->ops = &vc_vb2_ops;
     q->mem_ops = &vb2_vmalloc_memops;
 
@@ -105,9 +105,10 @@ int vc_out_videobuf2_setup( struct vc_device * dev )
 }
 
 int vc_out_queue_setup( struct vb2_queue * vq,
-                         const struct v4l2_format * fmt,
+                         //const struct v4l2_format * fmt,
                          unsigned int *nbuffers, unsigned int *nplanes,
-                         unsigned int sizes[], void * alloc_ctxs[])
+                         unsigned int sizes[], 
+                         struct device * alloc_ctxs[])
 {
     unsigned long size;    
     struct vc_device * dev;
@@ -116,9 +117,9 @@ int vc_out_queue_setup( struct vb2_queue * vq,
 
     dev = vb2_get_drv_priv( vq );
 
-    if( fmt )
-        size = fmt->fmt.pix.sizeimage;
-    else
+    //if( fmt )
+    //    size = fmt->fmt.pix.sizeimage;
+    //else
         size = dev->output_format.sizeimage;
 
     PRINT_DEBUG("sizeimage set to %ld\n",size);
@@ -188,7 +189,7 @@ int vc_start_streaming( struct vb2_queue * q, unsigned int count )
     return 0;
 }
 
-int vc_stop_streaming( struct vb2_queue * vb2_q )
+void vc_stop_streaming( struct vb2_queue * vb2_q )
 {
     struct vc_device * dev;
     struct vc_out_buffer * buf;
@@ -216,7 +217,7 @@ int vc_stop_streaming( struct vb2_queue * vb2_q )
     }
     spin_unlock_irqrestore( &dev->out_q_slock, flags );
 
-    return 0;
+    //return 0;
 }
 
 void vc_outbuf_lock( struct vb2_queue * vq )
