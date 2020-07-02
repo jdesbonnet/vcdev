@@ -1,3 +1,4 @@
+#include <linux/version.h>
 #include "vcvideobuf.h"
 #include "debug.h"
 #include <linux/spinlock.h>

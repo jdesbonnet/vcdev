@@ -1,3 +1,4 @@
+#include <linux/version.h>
 #include <linux/module.h>
 #include <linux/spinlock.h>
 #include <linux/time.h>
@@ -143,7 +144,7 @@ void submit_noinput_buffer(struct vc_out_buffer * buf,
 	size_t rowsize;
 	size_t rows;
 	int i,j,stripe_size;
-	struct timeval ts;
+	struct timespec64 ts;
 	int32_t *yuyv_ptr;
 	int32_t yuyv_tmp;
 	unsigned char * yuyv_helper = (unsigned char *) &yuyv_tmp;
@@ -189,8 +190,8 @@ void submit_noinput_buffer(struct vc_out_buffer * buf,
 
 	//memset( vbuf_ptr, 0x00, size );
 
-	do_gettimeofday( &ts );
-	buf->vb.v4l2_buf.timestamp = ts;
+	ktime_get_real_ts64( &ts );
+	buf->vb.timestamp = ts.tv_nsec;
 	vb2_buffer_done( &buf->vb, VB2_BUF_STATE_DONE );
 	//PRINT_DEBUG("Skipped buffer submitted\n");
 }
@@ -311,7 +312,7 @@ void submit_copy_buffer( struct vc_out_buffer * out_buf,
 {
 	void * in_vbuf_ptr;
 	void * out_vbuf_ptr;
-	struct timeval ts;
+	struct timespec64 ts;
 
 	in_vbuf_ptr = in_buf->data;
 	if(!in_vbuf_ptr){
@@ -365,8 +366,8 @@ void submit_copy_buffer( struct vc_out_buffer * out_buf,
 		}	
 	}
 	
-	do_gettimeofday( &ts );
-	out_buf->vb.v4l2_buf.timestamp = ts;
+	ktime_get_real_ts64( &ts );
+	out_buf->vb.timestamp = ts.tv_nsec;
 	vb2_buffer_done( &out_buf->vb, VB2_BUF_STATE_DONE );
 	//PRINT_DEBUG("Copy buffer submitted, %dB\n", (int)in_buf->filled);
 }

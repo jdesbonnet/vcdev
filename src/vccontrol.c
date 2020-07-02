@@ -4,6 +4,7 @@
 #include <linux/slab.h>
 #include <linux/device.h>
 #include <linux/uaccess.h>
+#include <linux/version.h>
 #include "vcdevice.h"
 #include "vccontrol.h"
 #include "vcvideobuf.h"
